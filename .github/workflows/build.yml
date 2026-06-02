@@ -1,18 +1,12 @@
 name: Spring Boot CI
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-
   pull_request:
     branches:
-      - main
+      - "**"
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -40,3 +34,12 @@ jobs:
 
       - name: Package Application
         run: mvn package
+      
+      - name: Generate Coverage
+        run: mvn verify
+      
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco
