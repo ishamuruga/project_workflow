@@ -5,41 +5,23 @@ on:
     branches:
       - "**"
 
-jobs:   
+jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
+          cache: maven
 
-      - name: Cache Maven Packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ hashFiles('**/pom.xml') }}
+      - name: Run unit tests
+        run: mvn -B test
 
-      - name: Build Project
-        run: mvn clean compile
-
-      - name: Run Tests
-        run: mvn test
-
-      - name: Package Application
-        run: mvn package
-      
-      - name: Generate Coverage
-        run: mvn verify
-      
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: target/site/jacoco
+      - name: Package JAR
+        run: mvn -B package
